@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduWell AI - Your Mental Health & Productivity Companion</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 400px;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .header {
+            background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
+            padding: 25px 20px;
+            text-align: center;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #777;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .tab.active {
+            color: #4facfe;
+            border-bottom: 3px solid #4facfe;
+        }
+        
+        .tab i {
+            margin-right: 5px;
+        }
+        
+        .content {
+            padding: 20px;
+            min-height: 400px;
+        }
+        
+        .screen {
+            display: none;
+        }
+        
+        .screen.active {
+            display: block;
+        }
+        
+        .welcome-text {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
+        .welcome-text h2 {
+            color: #4facfe;
+            margin-bottom: 10px;
+        }
+        
+        .welcome-text p {
+            color: #777;
+            line-height: 1.5;
+        }
+        
+        .mood-selector {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+        
+        .mood {
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .mood:hover {
+            transform: scale(1.1);
+        }
+        
+        .mood i {
+            font-size: 30px;
+            margin-bottom: 5px;
+            padding: 10px;
+            border-radius: 50%;
+            background: #f5f5f5;
+        }
+        
+        .mood p {
+            font-size: 12px;
+            color: #777;
+        }
+        
+        .mood.selected i {
+            background: #e3f2fd;
+            color: #4facfe;
+        }
+        
+        .chat-container {
+            background: #f5f5f5;
+            border-radius: 15px;
+            padding: 15px;
+            height: 300px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+        
+        .message {
+            padding: 10px 15px;
+            border-radius: 18px;
+            margin-bottom: 10px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+        
+        .ai-message {
+            background: #e3f2fd;
+            border-bottom-left-radius: 5px;
+            align-self: flex-start;
+        }
+        
+        .user-message {
+            background: #4facfe;
+            color: white;
+            border-bottom-right-radius: 5px;
+            align-self: flex-end;
+            margin-left: auto;
+        }
+        
+        .chat-input {
+            display: flex;
+            margin-top: 10px;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 25px;
+            outline: none;
+        }
+        
+        .chat-input button {
+            background: #4facfe;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+        
+        .suggestion-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .chip {
+            background: #e3f2fd;
+            padding: 8px 15px;
+            border-radius: 18px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .chip:hover {
+            background: #bbdefb;
+        }
+        
+        .resource-card {
+            background: #f5f5f5;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .resource-card i {
+            font-size: 24px;
+            margin-right: 15px;
+            color: #4facfe;
+        }
+        
+        .resource-info h3 {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        
+        .resource-info p {
+            font-size: 14px;
+            color: #777;
+        }
+        
+        .stats-container {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+        
+        .stat {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #4facfe;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #777;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: #f5f5f5;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
+            border-radius: 4px;
+            width: 65%;
+        }
+        
+        .btn {
+            background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            width: 100%;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+        }
+        
+        .btn:hover {
+            opacity: 0.9;
+        }
+        
+        .motivation-quote {
+            background: #f5f5f5;
+            border-left: 4px solid #4facfe;
+            padding: 15px;
+            border-radius: 0 10px 10px 0;
+            margin: 20px 0;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>EduWell AI</h1>
+            <p>Your Mental Health & Productivity Companion</p>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab(0)"><i class="fas fa-home"></i> Home</div>
+            <div class="tab" onclick="switchTab(1)"><i class="fas fa-comment"></i> Chat</div>
+            <div class="tab" onclick="switchTab(2)"><i class="fas fa-chart-line"></i> Progress</div>
+            <div class="tab" onclick="switchTab(3)"><i class="fas fa-tools"></i> Resources</div>
+        </div>
+        
+        <div class="content">
+            <!-- Home Screen -->
+            <div class="screen active" id="home-screen">
+                <div class="welcome-text">
+                    <h2>Welcome Back, Student!</h2>
+                    <p>How are you feeling today?</p>
+                </div>
+                
+                <div class="mood-selector">
+                    <div class="mood" onclick="selectMood(this)">
+                        <i class="fas fa-tired"></i>
+                        <p>Stressed</p>
+                    </div>
+                    <div class="mood" onclick="selectMood(this)">
+                        <i class="fas fa-frown"></i>
+                        <p>Anxious</p>
+                    </div>
+                    <div class="mood" onclick="selectMood(this)">
+                        <i class="fas fa-meh"></i>
+                        <p>Neutral</p>
+                    </div>
+                    <div class="mood" onclick="selectMood(this)">
+                        <i class="fas fa-smile"></i>
+                        <p>Good</p>
+                    </div>
+                    <div class="mood" onclick="selectMood(this)">
+                        <i class="fas fa-laugh"></i>
+                        <p>Great</p>
+                    </div>
+                </div>
+                
+                <div class="motivation-quote">
+                    "Progress is progress, no matter how small. You've got this!"
+                </div>
+                
+                <div class="stats-container">
+                    <div class="stat">
+                        <div class="stat-value">5</div>
+                        <div class="stat-label">Days Streak</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">78%</div>
+                        <div class="stat-label">Productivity</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">12</div>
+                        <div class="stat-label">Goals Met</div>
+                    </div>
+                </div>
+                
+                <div>
+                    <p><strong>Today's Focus:</strong> Complete Math Assignment</p>
+                    <div class="progress-bar">
+                        <div class="progress"></div>
+                    </div>
+                </div>
+                
+                <button class="btn" onclick="switchTab(1)">Chat with EduWell AI</button>
+            </div>
+            
+            <!-- Chat Screen -->
+            <div class="screen" id="chat-screen">
+                <div class="chat-container" id="chat-messages">
+                    <div class="message ai-message">
+                        Hi there! How are you feeling today?
+                    </div>
+                    <div class="message user-message">
+                        I'm a bit stressed about my exams next week.
+                    </div>
+                    <div class="message ai-message">
+                        I understand. Exam time can be challenging. Remember to take breaks and practice deep breathing. Would you like me to suggest a study plan?
+                    </div>
+                </div>
+                
+                <div class="suggestion-chips">
+                    <div class="chip" onclick="sendMessage('I need study tips')">Study Tips</div>
+                    <div class="chip" onclick="sendMessage('I need to relax')">Relaxation Techniques</div>
+                    <div class="chip" onclick="sendMessage('Help with motivation')">Motivation Help</div>
+                    <div class="chip" onclick="sendMessage('Suggest a break activity')">Break Activity</div>
+                </div>
+                
+                <div class="chat-input">
+                    <input type="text" id="user-input" placeholder="Type your message...">
+                    <button onclick="sendUserMessage()"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+            
+            <!-- Progress Screen -->
+            <div class="screen" id="progress-screen">
+                <div class="welcome-text">
+                    <h2>Your Progress</h2>
+                    <p>Tracking your well-being and productivity</p>
+                </div>
+                
+                <div class="stats-container">
+                    <div class="stat">
+                        <div class="stat-value">12</div>
+                        <div class="stat-label">Sessions</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">3.8</div>
+                        <div class="stat-label">Avg Mood</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">78%</div>
+                        <div class="stat-label">Focus</div>
+                    </div>
+                </div>
+                
+                <div>
+                    <p><strong>Mood Trend (Last 7 Days)</strong></p>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 75%"></div>
+                    </div>
+                </div>
+                
+                <div>
+                    <p><strong>Productivity Trend (Last 7 Days)</strong></p>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 65%"></div>
+                    </div>
+                </div>
+                
+                <div class="motivation-quote">
+                    "You've shown consistent improvement in managing stress. Keep practicing mindfulness!"
+                </div>
+                
+                <button class="btn">View Detailed Report</button>
+            </div>
+            
+            <!-- Resources Screen -->
+            <div class="screen" id="resources-screen">
+                <div class="welcome-text">
+                    <h2>Wellness Resources</h2>
+                    <p>Tools to support your journey</p>
+                </div>
+                
+                <div class="resource-card">
+                    <i class="fas fa-meditation"></i>
+                    <div class="resource-info">
+                        <h3>Guided Meditation</h3>
+                        <p>10-minute session to reduce stress</p>
+                    </div>
+                </div>
+                
+                <div class="resource-card">
+                    <i class="fas fa-book"></i>
+                    <div class="resource-info">
+                        <h3>Study Techniques</h3>
+                        <p>Pomodoro method and active recall</p>
+                    </div>
+                </div>
+                
+                <div class="resource-card">
+                    <i class="fas fa-running"></i>
+                    <div class="resource-info">
+                        <h3>Quick Exercises</h3>
+                        <p>5-minute desk exercises for energy</p>
+                    </div>
+                </div>
+                
+                <div class="resource-card">
+                    <i class="fas fa-bed"></i>
+                    <div class="resource-info">
+                        <h3>Sleep Hygiene</h3>
+                        <p>Tips for better rest</p>
+                    </div>
+                </div>
+                
+                <button class="btn">Explore More Resources</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching functionality
+        function switchTab(tabIndex) {
+            // Update tabs
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach((tab, index) => {
+                if (index === tabIndex) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+            
+            // Update screens
+            const screens = document.querySelectorAll('.screen');
+            screens.forEach((screen, index) => {
+                if (index === tabIndex) {
+                    screen.classList.add('active');
+                } else {
+                    screen.classList.remove('active');
+                }
+            });
+        }
+        
+        // Mood selection functionality
+        function selectMood(element) {
+            const moods = document.querySelectorAll('.mood');
+            moods.forEach(mood => mood.classList.remove('selected'));
+            element.classList.add('selected');
+            
+            // In a real app, this would send the mood data to the backend
+            setTimeout(() => {
+                switchTab(1); // Switch to chat tab
+                addMessage("I've logged your mood. Would you like to talk about what's making you feel this way?", 'ai');
+            }, 500);
+        }
+        
+        // Chat functionality
+        function sendUserMessage() {
+            const input = document.getElementById('user-input');
+            const message = input.value.trim();
+            
+            if (message) {
+                addMessage(message, 'user');
+                input.value = '';
+                
+                // Simulate AI response after a delay
+                setTimeout(() => {
+                    generateAIResponse(message);
+                }, 1000);
+            }
+        }
+        
+        function sendMessage(message) {
+            addMessage(message, 'user');
+            
+            // Simulate AI response after a delay
+            setTimeout(() => {
+                generateAIResponse(message);
+            }, 1000);
+        }
+        
+        function addMessage(text, sender) {
+            const chatContainer = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message');
+            messageDiv.classList.add(sender === 'user' ? 'user-message' : 'ai-message');
+            messageDiv.textContent = text;
+            
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+        
+        function generateAIResponse(userMessage) {
+            const responses = [
+                "I understand how that can be challenging. Have you tried breaking it down into smaller steps?",
+                "It's completely normal to feel that way. Remember to take deep breaths when feeling overwhelmed.",
+                "Many students find it helpful to create a study schedule. Would you like me to help with that?",
+                "How about taking a short break? I can suggest a 5-minute mindfulness exercise.",
+                "It's important to be kind to yourself during stressful times. You're doing better than you think!",
+                "Would you like to try the Pomodoro technique? Study for 25 minutes, then take a 5-minute break.",
+                "Remember to stay hydrated and take care of your physical health during study sessions. It makes a big difference!",
+                "Let's focus on one thing at a time. What's the most important task right now?"
+            ];
+            
+            // Simple pattern matching (in a real app, this would be much more sophisticated)
+            if (userMessage.toLowerCase().includes('study') || userMessage.toLowerCase().includes('exam')) {
+                addMessage("I can help with study strategies. The Pomodoro technique is effective for many students. Would you like me to explain it?", 'ai');
+            } else if (userMessage.toLowerCase().includes('stress') || userMessage.toLowerCase().includes('anxious')) {
+                addMessage("When feeling stressed, try the 4-7-8 breathing technique: inhale for 4 seconds, hold for 7, exhale for 8. Would you like a guided session?", 'ai');
+            } else if (userMessage.toLowerCase().includes('tired') || userMessage.toLowerCase().includes('exhaust')) {
+                addMessage("It's important to listen to your body. How about a short break with some light stretching?", 'ai');
+            } else {
+                // Random response if no patterns match
+                const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                addMessage(randomResponse, 'ai');
+            }
+        }
+        
+        // Initialize with some content
+        window.onload = function() {
+            // Simulate initial AI message after a short delay
+            setTimeout(() => {
+                addMessage("Welcome to EduWell AI! I'm here to help with your mental health and productivity. How are you feeling today?", 'ai');
+            }, 500);
+        };
+    </script>
+</body>
+</html>
